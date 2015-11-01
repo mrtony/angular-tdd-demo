@@ -1,6 +1,17 @@
 Augular TDD example
 ===
+# 術語
 
+### mocha
+mocha是一個test framework, 與Jasmine是相同的
+
+### karma
+是一個基於node.js的javascript測試執行過程管理工具(Test Runner)
+
+### Chai
+Chai is a BDD / TDD assertion library
+
+---
 
 # CH02
 ### 0202-App Setup
@@ -89,4 +100,51 @@ gulp.task('serve-test', function() {
 });
 ```
 
+### 0204 - Running Karma test
+1. 安裝karma, `npm install --save karma mocha` , 而現在bower, npm都有裝mocha, 但沒有關係。
+2. 安裝global karma, `npm install karma -g`
+3. 建立`karma.conf.js`
+4. 安裝karma-mocha, `npm install --save karma-mocha`
+5. 在gulpfile.js中加入使用karma的task
+6. 執行`gulp test-browser`後，會出現訊息說沒有裝`PhantomJS`, 安裝它: `npm install --save-dev karma-phantomjs-launcher`
+7. 執行`gulp test-browser`後還是沒有執行成功，再安裝global的套件: `npm install -g karma-mocha karma-phantomjs-launcher`
+8. 執行`karma start`, 可以看到karma和phantomjs都正常. 按ctrl-c結束。
+9. 執行`gulp test-browser`, 不會顯示錯誤，但也是沒有輸出什麼. 要繼續安裝backend server才會正常動作。
+
+```
+var karma = require('karma').server;
+
+gulp.task('test-browser', function() {
+	karma.start({
+		configFile: __dirname + '/karma.conf.js',
+		singleRun: true,
+		reporters: ['mocha']
+	});
+});
+```
+
+
+### 0205 - Implementing a Simple Back End With Express
+裝不少套件，主要是要讓gulp可以同時讓前後台server可同時執行。
+1. 安裝express. 執行`npm install --save express`
+2. 建立`server.js`, 提供contacts的json資料, 並listen port 9001, 然後執行 `node server.js`
+3. 安裝`npm install --save gulp-live-server`
+4. 在gulpfile.js中用gulp-live-server建立一個`server`的task.
+5. 在原本建好的`serve`的task, 加入一個同時執行旳server task(剛建立的)
+6. 執行`gulp serve`, 用port:8080可看到hello world, 用port:9001/contacts可得到回傳的json.
+
+server task
+```
+var server = require('gulp-live-server');
+
+gulp.task('server', function() {
+	var live = new server('server.js');
+	live.start();
+});
+```
+
+執行serve時也要同時執行server
+```
+gulp.task('serve', ['server'],function() {});
+```
 
