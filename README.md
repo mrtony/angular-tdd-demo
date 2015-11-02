@@ -148,3 +148,17 @@ gulp.task('server', function() {
 gulp.task('serve', ['server'],function() {});
 ```
 
+---
+# CH03
+
+### 0301 - Testing servicewith injectand module
+1. 建立一個angular service可以用來$http取得ch02建立的後端提供的contacts資料 - `contactService`
+2. 安裝`angular-mock`. 'bower install --save angular-mocks'
+3. 修改main.spec.js, 利用angular-mocks來載入`contactService`
+4. 執行`gulp serve-test`後，會出現`ReferenceError: module is not defined`的錯誤。必需將`angular-mocks.js`在`angular.js`前載入。
+5. 執行`gulp serve-test`, 出現`AssertionError: expected { contacts: [] } to be a number`
+6. 修改為正確的版本
+
+```
+expect(contactService.contacts).to.be.an('array');
+```
