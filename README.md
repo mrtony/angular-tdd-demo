@@ -162,3 +162,35 @@ gulp.task('serve', ['server'],function() {});
 ```
 expect(contactService.contacts).to.be.an('array');
 ```
+
+### 0302_Verifying GET and POST Functionality With httpBackend
+1. 為了不用每次都去inject module, 可以用foreach.
+2. 因為用了beforeForEach, 可以多寫幾個test, 比如測試httpBackend
+3. 測試第一次會得到錯誤, 使用`expectGET()`, 得到第二次錯誤
+4. 再加上`respond(200, [])`後，即可得到正確的結果。
+
+foreach code
+```
+beforeEach(function() {
+	module('AddressBook');
+	inject(function($injector) {
+		contactService = $injector.get('contactService');
+	});
+});
+```
+
+httpBackend 第一次錯誤
+```
+Error: Unexpected request: GET http://localhost:9001/contacts
+```
+httpBackend 第二次錯誤
+```
+Error: No response defined !
+```
+
+完整httpBackend code
+```
+$httpBackend.expectGET("http://localhost:9001/contacts")
+.respond(200, []);
+$httpBackend.flush();
+```
